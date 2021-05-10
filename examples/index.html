@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="qrcode">
+  </div>
+  <script src="./tantan-sdk-v1.0.0.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var client_id = '1a3f081b-2fde-41a8-beb9-7105f3b847f0';
+      var tantan = new TanTanQrLogin({ client_id });
+      tantan.login(data => console.log(data));
+    });
+  </script>
+</body>
+
+</html>
