@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo elements | tan tan solutions</title>
+  </head>
+
+  <body>
+    <button
+      type="button"
+      class="tt-button"
+      tt-width="100"
+      tt-height="10"
+      tt-title="Boletos de Adulto"
+      tt-price="7000"
+    ></button>
+    <br />
+    <button
+      type="button"
+      class="tt-button"
+      tt-width="50"
+      tt-height="50"
+      tt-title="Boletos de Adulto"
+      tt-price="7000"
+    ></button>
+    <button
+      type="button"
+      class="tt-button"
+      tt-width="300"
+      tt-height="50"
+      tt-title="Boletos de Adulto"
+      tt-price="7000"
+    ></button>
+    <br />
+    <button type="button" class="tt-button"></button>
+    <script src="../dist/tantan-sdk-v1.0.0.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var client_id = "1a3f081b-2fde-41a8-beb9-7105f3b847f0";
+        var tantan = new TanTanQrLogin({ client_id });
+        tantan.init();
+      });
+    </script>
+  </body>
+</html>
