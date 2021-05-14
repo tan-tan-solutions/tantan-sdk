@@ -1,10 +1,10 @@
 const generateQrCode = (el, data) => {
-  const qrcode = new QRCode(el, {
-    text: data,
-    colorDark: '#f38027',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.H
-  })
+  const qrcode = document.getElementById(el)
+  const size = qrcode.getAttribute('tt-size') || 250
+  const img = document.createElement('img')
+  img.src = data
+  img.width = size
+  qrcode.appendChild(img)
 }
 
 class TanTanQrLogin {
@@ -79,7 +79,7 @@ class TanTanQrLogin {
       // handle login actions
       switch (data.action) {
         case 'qrcode':
-          generateQrCode('qrcode', data.qr_data)
+          generateQrCode('qrcode', data.qr_encoded)
           break
         case 'authorized':
           cb(data.user_info)

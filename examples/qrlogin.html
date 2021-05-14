@@ -14,7 +14,10 @@
       document.addEventListener("DOMContentLoaded", function () {
         var client_id = "b16a0215-8107-401a-917a-6d949c20cc5f";
         var tantan = new TanTanQrLogin({ client_id });
-        tantan.login(data => console.log(data));
+        tantan.login((data) => {
+          console.log(data);
+          alert('Hola, ' + data.scope_result.personal_data.first_name);
+        });
       });
     </script>
   </body>
