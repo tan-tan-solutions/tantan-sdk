@@ -7,9 +7,36 @@ const generateQrCode = (el, data) => {
   qrcode.appendChild(img)
 }
 
+const generatePaymentWindow = (el, roomId, cb) => {
+  const qrcode = document.getElementById(el)
+  window.open(
+    'https://dashboard-tantan.netlify.app/#/forms/payment?title=' +
+      qrcode.getAttribute('tt-title') +
+      '&price=' +
+      qrcode.getAttribute('tt-price') + '&room_id=' + roomId,
+    'popup',
+    'width=600,height=600'
+  )
+}
+
+const handleAction = (data, action, cb) => {
+  console.log(action)
+  switch (action) {
+    case 'SIGNIN':
+      cb(data.user_info)
+      break
+    case 'PAY':
+      console.log(data)
+      generatePaymentWindow('qrcode', data.room_id, cb)
+      break
+    default:
+      break
+  }
+}
 class TanTanQrLogin {
   constructor (config) {
     this.client_id = config.client_id
+    this.action = config.action || 'SIGNIN'
   }
 
   init () {
@@ -62,12 +89,14 @@ class TanTanQrLogin {
   login (cb) {
     const wsPath =
       'wss://qrlogin-test.tantan.solutions:8001/login/stream/?client_id=' +
-      this.client_id
+      this.client_id +
+      '&action=' +
+      this.action
     console.log('Connecting to ' + wsPath)
     const socket = new ReconnectingWebSocket(wsPath)
 
     // Handle incoming messages
-    socket.onmessage = function (message) {
+    socket.onmessage = (message) => {
       // Decode the JSON
       const data = JSON.parse(message.data)
       // Handle errors
@@ -82,7 +111,7 @@ class TanTanQrLogin {
           generateQrCode('qrcode', data.qr_encoded)
           break
         case 'authorized':
-          cb(data.user_info)
+          handleAction(data, this.action, cb)
           break
       }
     }
