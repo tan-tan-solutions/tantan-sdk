@@ -19,7 +19,7 @@ const generateQrCode = (el, data) => {
  */
 const generatePaymentWindow = (el, roomId, cb) => {
   window.open(
-    'https://dashboard-tantan.netlify.app/#/forms/payment?title=' +
+    'https://qrdash.tantan.solutions/#/forms/payment?title=' +
       el.getAttribute('tt-title') +
       '&price=' +
       el.getAttribute('tt-price') +
