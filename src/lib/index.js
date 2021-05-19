@@ -1,104 +1,84 @@
+/**
+ *
+ * @param {*} el
+ * @param {*} data
+ */
 const generateQrCode = (el, data) => {
-  const qrcode = document.getElementById(el)
-  const size = qrcode.getAttribute('tt-size') || 250
+  const size = el.getAttribute('tt-size') || 250
   const img = document.createElement('img')
   img.src = data
   img.width = size
-  qrcode.appendChild(img)
+  el.appendChild(img)
 }
 
+/**
+ *
+ * @param {*} el
+ * @param {*} roomId
+ * @param {*} cb
+ */
 const generatePaymentWindow = (el, roomId, cb) => {
-  const qrcode = document.getElementById(el)
   window.open(
     'https://dashboard-tantan.netlify.app/#/forms/payment?title=' +
-      qrcode.getAttribute('tt-title') +
+      el.getAttribute('tt-title') +
       '&price=' +
-      qrcode.getAttribute('tt-price') + '&room_id=' + roomId,
+      el.getAttribute('tt-price') +
+      '&room_id=' +
+      roomId,
     'popup',
     'width=600,height=600'
   )
 }
 
-const handleAction = (data, action, cb) => {
-  console.log(action)
+/**
+ *
+ * @param {*} el
+ * @param {*} data
+ * @param {*} action
+ * @param {*} cb
+ */
+const handleAction = (el, data, action, cb) => {
+  const roomId = window.localStorage.getItem('room_id')
   switch (action) {
     case 'SIGNIN':
       cb(data.user_info)
       break
     case 'PAY':
-      console.log(data)
-      generatePaymentWindow('qrcode', data.room_id, cb)
+      generatePaymentWindow(el, roomId, cb)
       break
     default:
       break
   }
 }
+
 class TanTanQrLogin {
   constructor (config) {
     this.client_id = config.client_id
     this.action = config.action || 'SIGNIN'
   }
 
-  init () {
-    // https://www.javascripttutorial.net/dom/css/add-styles-to-an-element/
-    const style = document.createElement('style')
-    style.innerHTML = `
-      .tt-button {
-        background-color: #f38027;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 2px;
-      }
-      .tt-button:hover {
-        background-color: #076fac;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 2px;
-      }`
-    document.head.appendChild(style)
-
-    const buttons = document.getElementsByClassName('tt-button')
-
-    for (const button of buttons) {
-      const width = button.getAttribute('tt-width') || 50
-      const height = button.getAttribute('tt-height') || 10
-      button.style.cssText += `padding: ${height}px ${width}px ${height}px ${width}px;`
-      const img = document.createElement('img')
-      img.src =
-        'https://tantan.solutions/wp-content/uploads/2020/05/tantan_ID-2-1536x826.png'
-      img.width = '50'
-      button.appendChild(img)
-      button.addEventListener('click', function () {
-        const title = button.getAttribute('tt-title')
-        const price = button.getAttribute('tt-price')
-        window.open(
-          'https://dashboard-tantan.netlify.app/#/forms/preview?title=' +
-            title +
-            '&price=' +
-            price,
-          'popup',
-          'width=600,height=600'
-        )
-        return false
-      })
-    }
-  }
-
-  login (cb) {
+  /**
+   *
+   * @param {*} el
+   * @param {*} cb
+   */
+  login (el, cb) {
+    console.log(el)
+    const qrcode = document.getElementById(el)
+    const action = qrcode.getAttribute('tt-action')
     const wsPath =
       'wss://qrlogin-test.tantan.solutions:8001/login/stream/?client_id=' +
       this.client_id +
       '&action=' +
-      this.action
+      action
     console.log('Connecting to ' + wsPath)
     const socket = new ReconnectingWebSocket(wsPath)
 
     // Handle incoming messages
-    socket.onmessage = (message) => {
+    socket.onmessage = message => {
       // Decode the JSON
       const data = JSON.parse(message.data)
+      console.log(data)
       // Handle errors
       if (data.error) {
         console.log(data.error)
@@ -108,10 +88,11 @@ class TanTanQrLogin {
       // handle login actions
       switch (data.action) {
         case 'qrcode':
-          generateQrCode('qrcode', data.qr_encoded)
+          window.localStorage.setItem('room_id', data.room_id)
+          generateQrCode(qrcode, data.qr_encoded)
           break
         case 'authorized':
-          handleAction(data, this.action, cb)
+          handleAction(qrcode, data, action, cb)
           break
       }
     }
