@@ -8,16 +8,22 @@
   </head>
 
   <body>
-    <div id="qrcode" tt-size="300" tt-action="PAY" tt-title="Evento Coparmex" tt-price="1"></div>
+    <div
+      id="qrcode"
+      tt-size="300"
+      tt-action="PAY"
+      tt-title="Evento Coparmex"
+      tt-price="1"
+    ></div>
     <!--  -->
     <script src="../dist/tantan-sdk-v1.0.0.min.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         var client_id = "b16a0215-8107-401a-917a-6d949c20cc5f";
         var tantan = new TanTanQrLogin({ client_id });
-        tantan.login('qrcode', (data) => {
+        tantan.login("qrcode", (data) => {
           console.log(data);
-          alert('Hola, ' + data.scope_result.personal_data.first_name);
+          alert("Gracias por tu compra, " + data.scope_result.personal_data.first_name);
         });
       });
     </script>

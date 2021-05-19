@@ -94,6 +94,9 @@ class TanTanQrLogin {
         case 'authorized':
           handleAction(qrcode, data, action, cb)
           break
+        case 'payment':
+          cb()
+          break
       }
     }
   }
