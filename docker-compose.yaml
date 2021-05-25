@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  tantan_dash:
+    build: .
+    container_name: tantan_sdk
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+
+      

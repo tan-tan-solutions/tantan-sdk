@@ -1,0 +1,31 @@
+# this file is a template, for ci/cd tan-tan solutions
+
+image: docker:19.03.13
+stages:
+  - build
+  - deploy
+services:
+  - docker:19.03.13-dind
+variables:
+  # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: "/certs"
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+build:
+  stage: build
+  before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --pull -t $CONTAINER_RELEASE_IMAGE .
+    - docker push $CI_REGISTRY_IMAGE
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script: 
+    - chmod 600 /builds/tantan.solutions/tantan-sdk.tmp/SERVER_KEY 
+    - ssh -o StrictHostKeyChecking=no -i $SERVER_KEY ubuntu@$SERVER_IP "sudo /bin/bash ~/production/tantan-sdk/deploy.sh $CI_COMMIT_SHA" 
+  only:
+    - master
