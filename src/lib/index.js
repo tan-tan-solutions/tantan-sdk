@@ -14,11 +14,14 @@ class TanTanQrLogin {
     const qrcode = document.getElementById(el)
     console.log(qrcode)
     const action = qrcode.getAttribute('tt-action')
+    const roomId = window.localStorage.getItem('room_id')
     const wsPath =
       'wss://qrlogin-test.tantan.solutions:8001/login/stream/?client_id=' +
       this.client_id +
       '&action=' +
-      action
+      action +
+      '&room_id=' +
+      roomId
     console.log('Connecting to ' + wsPath)
     const socket = new ReconnectingWebSocket(wsPath)
 
@@ -32,9 +35,6 @@ class TanTanQrLogin {
         console.log(data.error)
         return
       }
-
-      const roomId = window.localStorage.getItem('room_id')
-
       // handle login actions
       switch (data.action) {
         case 'qrcode':
