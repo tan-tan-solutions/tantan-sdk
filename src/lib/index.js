@@ -11,9 +11,7 @@ class TanTanQrLogin {
    * @param {*} cb
    */
   login (el, cb) {
-    console.log(el)
     const qrcode = document.getElementById(el)
-    console.log(qrcode)
     const action = qrcode.getAttribute('tt-action')
     const roomId = window.localStorage.getItem('room_id')
     const wsPath =
@@ -27,6 +25,7 @@ class TanTanQrLogin {
     const socket = new ReconnectingWebSocket(wsPath)
     this.socket = socket
     this.handleAction(qrcode, roomId, cb)
+    console.log(qrcode)
   }
 
   handleAction (qrcode, roomId, cb) {
@@ -47,6 +46,7 @@ class TanTanQrLogin {
             window.localStorage.setItem('room_id', data.room_id)
           }
           this.generateQrCode(qrcode, data.qr_encoded)
+          window.localStorage.setItem('tt_qrcode', data.qr_encoded)
           break
         case 'authorized':
           console.log(data.user_info.scope_result.token)
