@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo elements | tan tan solutions</title>
+  </head>
+
+  <body>
+    <div id="qrcode"></div>
+    <button
+      type="button"
+      id="tt-button-1"
+      class="tt-button"
+      tt-title="Boletos de Adulto"
+      tt-price="1"
+      onclick="pay('tt-button-1')"
+    >
+      <img
+        width="50px"
+        src="https://tantan.solutions/wp-content/uploads/2020/05/tantan_ID-2-1536x826.png"
+        alt=""
+      />
+    </button>
+
+    <style>
+      .tt-button {
+        padding: 20px 100px 20px 100px;
+        background-color: #f38027;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 2px;
+      }
+      .tt-button:hover {
+        padding: 20px 100px 20px 100px;
+        background-color: #076fac;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 2px;
+      }
+    </style>
+  </body>
+</html>
+<!--  -->
+<script src="../dist/tantan-sdk-v1.0.0.min.js"></script>
+<script>
+  var tantan = null;
+  document.addEventListener("DOMContentLoaded", function () {
+    var client_id = "b16a0215-8107-401a-917a-6d949c20cc5f";
+    tantan = new TanTanQrLogin({ client_id });
+    tantan.login("qrcode", (data) => {
+      alert("Hola, " + data.scope_result.personal_data.first_name);
+    });
+  });
+  function pay(el) {
+    tantan.pay(el, (data) => {
+      alert(data.res.detail);
+    });
+  }
+</script>

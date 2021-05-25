@@ -5,7 +5,11 @@ const { parallel, series, src, dest } = require('gulp')
 
 const babel = require('gulp-babel')
 const concat = require('gulp-concat')
+// Add del dependency.
+const del = require('del')
 const plumber = require('gulp-plumber')
+// Add uglify dependency.
+const uglify = require('gulp-uglify')
 
 // Import the config array as `jsConfig`.
 const jsConfig = require('./src/config')
@@ -41,6 +45,7 @@ function jsDeps (done) {
       // Build the temporary file based on the config name property,
       // i.e. [name].deps.js.
       return src(deps)
+        .pipe(uglify())
         .pipe(concat(`${config.name}.deps.js`))
         .pipe(dest(tmpDir))
     }
@@ -71,22 +76,26 @@ function jsBuild (done) {
         done()
         return
       }
-      return src(files)
-        .pipe(plumber())
-        .pipe(concat(`${config.name}.build.js`))
-        .pipe(
-          babel({
-            presets: [
-              [
-                '@babel/env',
-                {
-                  modules: false
-                }
+      return (
+        src(files)
+          .pipe(plumber())
+          .pipe(concat(`${config.name}.build.js`))
+          .pipe(
+            babel({
+              presets: [
+                [
+                  '@babel/env',
+                  {
+                    modules: false
+                  }
+                ]
               ]
-            ]
-          })
-        )
-        .pipe(dest(tmpDir))
+            })
+          )
+          // Minify the self-authored bundle.
+          .pipe(uglify())
+          .pipe(dest(tmpDir))
+      )
     }
   })
 
@@ -121,4 +130,24 @@ function jsConcat (done) {
   })()
 }
 
+// Add a jsClean() task to delete the temporary *.deps.js and
+// *.build.js files from the temporary directory.
+function jsClean (done) {
+  const tasks = jsConfig.map(config => {
+    return done => {
+      const files = [
+        `${tmpDir}/${config.name}.deps.js`,
+        `${tmpDir}/${config.name}.build.js`
+      ]
+      return del(files)
+    }
+  })
+
+  return parallel(...tasks, parallelDone => {
+    parallelDone()
+    done()
+  })()
+}
+
+// Add jsClean() as the last task in the series.
 exports.default = series(parallel(jsDeps, jsBuild), jsConcat)
