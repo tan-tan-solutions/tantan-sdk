@@ -56,6 +56,8 @@
     });
   });
   function pay(el) {
-    tantan.pay(el);
+    tantan.pay(el, (data) => {
+      alert(data.res.detail);
+    });
   }
 </script>

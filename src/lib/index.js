@@ -2,6 +2,7 @@ class TanTanQrLogin {
   constructor (config) {
     this.client_id = config.client_id
     this.action = config.action || 'SIGNIN'
+    this.socket = null
   }
 
   /**
@@ -24,9 +25,13 @@ class TanTanQrLogin {
       roomId
     console.log('Connecting to ' + wsPath)
     const socket = new ReconnectingWebSocket(wsPath)
+    this.socket = socket
+    this.handleAction(qrcode, roomId, cb)
+  }
 
+  handleAction (qrcode, roomId, cb) {
     // Handle incoming messages
-    socket.onmessage = message => {
+    this.socket.onmessage = message => {
       // Decode the JSON
       const data = JSON.parse(message.data)
       console.log(data)
@@ -44,30 +49,27 @@ class TanTanQrLogin {
           this.generateQrCode(qrcode, data.qr_encoded)
           break
         case 'authorized':
-          this.handleAction(qrcode, data, action, cb)
+          console.log(data.user_info.scope_result.token)
+          window.localStorage.setItem(
+            'tt-web-token',
+            data.user_info.scope_result.token
+          )
+          cb(data.user_info)
           break
         case 'payment':
-          cb()
+          cb(data.payment_info)
           break
       }
     }
   }
 
-  pay (el) {
+  pay (el, cb) {
     const roomId = window.localStorage.getItem('room_id')
-    this.generatePaymentWindow(el, roomId, null)
+    this.generatePaymentWindow(el, roomId)
+    this.handleAction(null, roomId, cb)
   }
 
-  handleAction (el, data, cb) {
-    console.log(data.user_info.scope_result.token)
-    window.localStorage.setItem(
-      'tt-web-token',
-      data.user_info.scope_result.token
-    )
-    cb(data.user_info)
-  }
-
-  generatePaymentWindow (el, roomId, cb) {
+  generatePaymentWindow (el, roomId) {
     const button = document.getElementById(el)
     window.open(
       'https://dashboard.tantan.solutions/#/forms/payment?title=' +
