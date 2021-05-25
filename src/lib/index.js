@@ -1,56 +1,3 @@
-/**
- *
- * @param {*} el
- * @param {*} data
- */
-const generateQrCode = (el, data) => {
-  const size = el.getAttribute('tt-size') || 250
-  const img = document.createElement('img')
-  img.src = data
-  img.width = size
-  el.appendChild(img)
-}
-
-/**
- *
- * @param {*} el
- * @param {*} roomId
- * @param {*} cb
- */
-const generatePaymentWindow = (el, roomId, cb) => {
-  window.open(
-    'https://qrdash.tantan.solutions/#/forms/payment?title=' +
-      el.getAttribute('tt-title') +
-      '&price=' +
-      el.getAttribute('tt-price') +
-      '&room_id=' +
-      roomId,
-    'popup',
-    'width=600,height=600'
-  )
-}
-
-/**
- *
- * @param {*} el
- * @param {*} data
- * @param {*} action
- * @param {*} cb
- */
-const handleAction = (el, data, action, cb) => {
-  const roomId = window.localStorage.getItem('room_id')
-  switch (action) {
-    case 'SIGNIN':
-      cb(data.user_info)
-      break
-    case 'PAY':
-      generatePaymentWindow(el, roomId, cb)
-      break
-    default:
-      break
-  }
-}
-
 class TanTanQrLogin {
   constructor (config) {
     this.client_id = config.client_id
@@ -65,6 +12,7 @@ class TanTanQrLogin {
   login (el, cb) {
     console.log(el)
     const qrcode = document.getElementById(el)
+    console.log(qrcode)
     const action = qrcode.getAttribute('tt-action')
     const wsPath =
       'wss://qrlogin-test.tantan.solutions:8001/login/stream/?client_id=' +
@@ -85,19 +33,59 @@ class TanTanQrLogin {
         return
       }
 
+      const roomId = window.localStorage.getItem('room_id')
+
       // handle login actions
       switch (data.action) {
         case 'qrcode':
-          window.localStorage.setItem('room_id', data.room_id)
-          generateQrCode(qrcode, data.qr_encoded)
+          if (!roomId) {
+            window.localStorage.setItem('room_id', data.room_id)
+          }
+          this.generateQrCode(qrcode, data.qr_encoded)
           break
         case 'authorized':
-          handleAction(qrcode, data, action, cb)
+          this.handleAction(qrcode, data, action, cb)
           break
         case 'payment':
           cb()
           break
       }
     }
+  }
+
+  pay (el) {
+    const roomId = window.localStorage.getItem('room_id')
+    this.generatePaymentWindow(el, roomId, null)
+  }
+
+  handleAction (el, data, cb) {
+    console.log(data.user_info.scope_result.token)
+    window.localStorage.setItem(
+      'tt-web-token',
+      data.user_info.scope_result.token
+    )
+    cb(data.user_info)
+  }
+
+  generatePaymentWindow (el, roomId, cb) {
+    const button = document.getElementById(el)
+    window.open(
+      'https://dashboard.tantan.solutions/#/forms/payment?title=' +
+        button.getAttribute('tt-title') +
+        '&price=' +
+        button.getAttribute('tt-price') +
+        '&room_id=' +
+        roomId,
+      'popup',
+      'width=600,height=600'
+    )
+  }
+
+  generateQrCode (el, data) {
+    const size = el.getAttribute('tt-size') || 250
+    const img = document.createElement('img')
+    img.src = data
+    img.width = size
+    el.appendChild(img)
   }
 }

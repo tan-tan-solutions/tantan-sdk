@@ -23,9 +23,29 @@
         var tantan = new TanTanQrLogin({ client_id });
         tantan.login("qrcode", (data) => {
           console.log(data);
-          alert("Gracias por tu compra, " + data.scope_result.personal_data.first_name);
+          alert(
+            "Gracias por tu compra, " +
+              data.scope_result.personal_data.first_name
+          );
         });
       });
     </script>
+
+    <style>
+      .tt-button {
+        background-color: #f38027;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 2px;
+      }
+      .tt-button:hover {
+        background-color: #076fac;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 2px;
+      }
+    </style>
   </body>
 </html>
