@@ -15,7 +15,7 @@ class TanTanQrLogin {
     const action = qrcode.getAttribute('tt-action')
     const roomId = window.localStorage.getItem('room_id')
     const wsPath =
-      'wss://qrlogin-test.tantan.solutions:8001/login/stream/?client_id=' +
+      'wss://qrlogin-dev.tantan.solutions:8001/login/stream/?client_id=' +
       this.client_id +
       '&action=' +
       action +
