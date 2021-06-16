@@ -49,7 +49,7 @@
 <script>
   var tantan = null;
   document.addEventListener("DOMContentLoaded", function () {
-    var client_id = "b16a0215-8107-401a-917a-6d949c20cc5f";
+    var client_id = "42bb7f3d-f141-49d3-b9ba-5ce7f51cc1f9";
     tantan = new TanTanQrLogin({ client_id });
     tantan.login("qrcode", (data) => {
       alert("Hola, " + data.scope_result.personal_data.first_name);

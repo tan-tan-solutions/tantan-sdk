@@ -28,6 +28,13 @@ class TanTanQrLogin {
     console.log(qrcode)
   }
 
+  logout (cb) {
+    window.localStorage.removeItem('tt_qrcode')
+    window.localStorage.removeItem('room_id')
+    window.localStorage.removeItem('tt-web-token')
+    cb()
+  }
+
   handleAction (qrcode, roomId, cb) {
     // Handle incoming messages
     this.socket.onmessage = message => {
