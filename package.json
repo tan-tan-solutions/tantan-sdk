@@ -1,22 +1,42 @@
 {
-  "name": "tantan-sdk",
+  "name": "@tantan/tantan-sdk",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Node.js SDK for tan tan Login with QR Code",
   "main": "index.js",
+  "private": false,
   "scripts": {
     "build": "gulp && gulp",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --reporter spec --exit"
   },
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tan-tan-solutions/tantan-sdk.git"
+  },
+  "keywords": [
+    "tantan",
+    "tantan-sdk",
+    "qrcode",
+    "login"
+  ],
+  "author": "Raul Novelo <rnovelo.cruz98@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tan-tan-solutions/tantan-sdk/issues"
+  },
+  "homepage": "https://github.com/tan-tan-solutions/tantan-sdk#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "gh-pages": "^3.1.0",
-    "gulp-minify": "^3.1.0",
-    "gulp-uglifyjs": "^0.6.2",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21",
     "reconnecting-websocket": "^4.4.0"
   },
   "devDependencies": {
+    "gh-pages": "^3.1.0",
+    "gulp-minify": "^3.1.0",
+    "gulp-uglifyjs": "^0.6.2",
     "@babel/core": "^7.14.0",
     "@babel/preset-env": "^7.14.1",
     "del": "^6.0.0",
@@ -25,7 +45,10 @@
     "gulp-concat": "^2.6.1",
     "gulp-plumber": "^1.2.1",
     "gulp-uglify": "^3.0.2",
-    "jquery": "^3.6.0",
-    "lodash": "^4.17.21"
+    "chai": "^4.2.0",
+    "cross-env": "^7.0.2",
+    "jest": "^25.4.0",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1"
   }
 }
