@@ -1,5 +1,5 @@
 {
-  "name": "@tantan/tantan-sdk",
+  "name": "@tantan-solutions/tantan-sdk",
   "version": "1.0.0",
   "description": "A Node.js SDK for tan tan Login with QR Code",
   "main": "index.js",
